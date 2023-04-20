@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<link>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Demo</title>
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width" />
+<base href="/" />
+<style> 
+  body {
+	background: #eee !important;	
+}
+
+.wrapper {	
+	margin-top: 80px;
+  margin-bottom: 80px;
+}
+
+.form-signin {
+  max-width: 380px;
+  padding: 15px 35px 45px;
+  margin: 0 auto;
+  background-color: #fff;
+  border: 1px solid rgba(0,0,0,0.1);  
+}
+  .form-signin-heading,
+	.checkbox {
+	  margin-bottom: 30px;
+	}
+
+	.form-control {
+	  position: relative;
+	  font-size: 16px;
+	  height: auto;
+	  padding: 10px;
+	}
+
+  
+	input[type="text"] {
+	  margin-bottom: -1px;
+	  border-bottom-left-radius: 0;
+	  border-bottom-right-radius: 0;
+	}
+
+	input[type="password"] {
+	  margin-bottom: 20px;
+	  border-top-left-radius: 0;
+	  border-top-right-radius: 0;
+	}
+ 
+</style>
+<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css" />
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:700,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+      <div class="container unauthenticated">
+        <div class="wrapper">
+          <form class="form-signin">       
+            <h2 class="form-signin-heading">Đăng nhập</h2>
+            <input type="text" class="form-control" name="username" placeholder="Tài khoản" required="" autofocus="" />
+            <input type="password" class="form-control" name="password" placeholder="Mật khẩu" required=""/>      
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button> 
+            
+            <div>
+              With GitHub: <a href="/oauth2/authorization/github">click here</a>
+            </div>
+            <div>
+              With Google: <a href="/oauth2/authorization/google">click here</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="container authenticated" style="display: none">
+        <div class="wrapper">
+          <form class="form-signin">  
+            Tên đăng nhập: <span id="user"></span>
+            <div>
+                <button onClick="logout()" class="btn btn-primary">Logout</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
+      <script type="text/javascript">
+            $.ajaxSetup({
+              beforeSend : function(xhr, settings) {
+                if (settings.type == 'POST' || settings.type == 'PUT'
+                    || settings.type == 'DELETE') {
+                  if (!(/^http:.*/.test(settings.url) || /^https:.*/
+                      .test(settings.url))) {
+                    xhr.setRequestHeader("X-XSRF-TOKEN", Cookies
+                        .get('XSRF-TOKEN'));
+                  }
+                }
+              }
+            });
+            $.get("/user", function(data) {
+                $("#user").html(data.name);
+                $(".unauthenticated").hide();
+                $(".authenticated").show();
+            });
+            var logout = function() {
+              $.post("/logout", function() {
+                $("#user").html('');
+                $(".unauthenticated").show();
+                $(".authenticated").hide();
+              })
+              return true;
+            }
+          </script>
+</body>
+</html>
+
+
+
+  
